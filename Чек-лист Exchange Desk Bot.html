@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интерактивный Опросник: 
+</title>
+    <style>
+        :root {
+            /* Colors */
+            --bg-primary: #0a0a1a;
+            --bg-secondary: #12122b;
+            --bg-card: #1a1a3a;
+            --bg-hover: #24244a;
+           
+            --text-primary: #f0f0ff;
+            --text-secondary: #b8b8d6;
+            --text-muted: #8a8ab5;
+           
+            --accent-orange: #FF6B35;
+            --accent-cyan: #36D1DC;
+            --accent-green: #5DFDCB;
+            --accent-red: #ef4444;
+           
+            --gradient-primary: linear-gradient(135deg, #FF6B35 0%, #36D1DC 50%, #5DFDCB 100%);
+           
+            --border-color: #2d2d5a;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+           
+            /* Spacing */
+            --header-height: 70px;
+            --spacing: 1.5rem;
+           
+            /* Transitions */
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+            scroll-padding-top: var(--header-height);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing);
+        }
+        h1, h2 {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent; /* Fallback for non-WebKit browsers */
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        li {
+            margin-bottom: 5px;
+            transition: var(--transition);
+        }
+        li:hover {
+            background: var(--bg-hover);
+            padding: 5px;
+            border-radius: 4px;
+        }
+        input[type="checkbox"] {
+            accent-color: var(--accent-cyan); /* Цвет галочки */
+            margin-right: 10px;
+        }
+        label {
+            cursor: pointer;
+            color: #ffffff; /* Белый цвет для текста пунктов */
+        }
+        label:hover {
+            opacity: 0.9; /* Легкий эффект при наведении */
+        }
+        /* Дополнительные стили для карточек, если нужно */
+        section {
+            background: var(--bg-card);
+            padding: var(--spacing);
+            margin-bottom: var(--spacing);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .status-message {
+            display: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-top: 10px;
+            text-align: center;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        button {
+            background: var(--gradient-primary);
+            color: var(--text-primary);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 20px;
+            transition: var(--transition);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        button:hover:not(:disabled) {
+            opacity: 0.9;
+        }
+        .header {
+            position: relative;
+            background: var(--bg-secondary);
+            padding: var(--spacing);
+            text-align: center;
+            margin-bottom: var(--spacing);
+        }
+        /* Светящаяся линия в хедере (в нижней части) */
+        .header::after {
+            content: ''; /* ОБЯЗАТЕЛЬНО - без этого псевдоэлемент не отобразится */
+            position: absolute;
+            bottom: 0; /* Прижимаем к нижнему краю хедера */
+            left: 0;
+            width: 100%; /* На всю ширину */
+            height: 2px; /* Увеличил высоту для лучшей видимости */
+           
+            /* ГРАДИЕНТ - проверяем что переменные существуют */
+            background: linear-gradient(
+                90deg,
+                transparent,
+                #FF6B35, /* Явно указываем цвета вместо переменных */
+                #36D1DC, /* для проверки */
+                #5DFDCB,
+                transparent
+            );
+           
+            z-index: 2; /* Поверх содержимого */
+            pointer-events: none; /* Чтобы линия не мешала кликать */
+           
+            /* АНИМАЦИЯ */
+            animation: scanline 3s linear infinite; /* Ускорил для наглядности */
+        }
+        .footer {
+            position: relative;
+            background: var(--bg-secondary);
+            padding: var(--spacing);
+            text-align: center;
+            color: var(--text-muted);
+            margin-top: var(--spacing);
+        }
+        /* Светящаяся линия в футере (в верхней части) */
+        .footer::before {
+            content: ''; /* ОБЯЗАТЕЛЬНО - без этого псевдоэлемент не отобразится */
+            position: absolute;
+            top: 0; /* Прижимаем к верхнему краю футера */
+            left: 0;
+            width: 100%; /* На всю ширину */
+            height: 2px; /* Увеличил высоту для лучшей видимости */
+           
+            /* ГРАДИЕНТ - проверяем что переменные существуют */
+            background: linear-gradient(
+                90deg,
+                transparent,
+                #FF6B35, /* Явно указываем цвета вместо переменных */
+                #36D1DC, /* для проверки */
+                #5DFDCB,
+                transparent
+            );
+           
+            z-index: 2; /* Поверх содержимого футера */
+            pointer-events: none; /* Чтобы линия не мешала кликать по ссылкам */
+           
+            /* АНИМАЦИЯ */
+            animation: scanline 3s linear infinite; /* Ускорил для наглядности */
+        }
+        @keyframes scanline {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+        /* Responsive design for sections */
+        .sections-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing);
+        }
+        @media (max-width: 768px) {
+            .sections-container {
+                grid-template-columns: repeat(2, 1fr); /* 2 блока на мобильных устройствах */
+            }
+        }
+        @media (max-width: 480px) {
+            .sections-container {
+                grid-template-columns: 1fr; /* 1 блок на очень маленьких экранах для лучшей читаемости */
+            }
+            section {
+                padding: 1rem; /* Уменьшаем отступы для компактности */
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>Чек-лист Exchange Desk Bot</h1>
+    </header>
+    <div class="container">
+        <p>Отмечайте галочками выполненные пункты.</p>
+
+        <div class="sections-container">
+            <section>
+                <h2>1. Старт и создание обменника</h2>
+                <ul>
+                    <li><input type="checkbox" id="item1-1"> <label for="item1-1">Принять условия использования</label></li>
+                    <li><input type="checkbox" id="item1-2"> <label for="item1-2">Создать свой обменный пункт (название, базовая валюта, часовой пояс)</label></li>
+                    <li><input type="checkbox" id="item1-3"> <label for="item1-3">Получить подтверждение о создании</label></li>
+                </ul>
+                <div class="status-message"></div>
+            </section>
+
+            <section>
+                <h2>2. Настройка валют</h2>
+                <ul>
+                    <li><input type="checkbox" id="item2-1"> <label for="item2-1">Добавить торгуемые валюты (USD, EUR, GBP...)</label></li>
+                    <li><input type="checkbox" id="item2-2"> <label for="item2-2">Создать кросс-пары (EUR/USD, GBP/USD...)</label></li>
+                    <li><input type="checkbox" id="item2-3"> <label for="item2-3">Настроить номиналы купюр (связь с глобальной БД или вручную)</label></li>
+                    <li><input type="checkbox" id="item2-4"> <label for="item2-4">Настроить дробную часть (2 знака для фиата, 3-4 для крипты)</label></li>
+                    <li><input type="checkbox" id="item2-5"> <label for="item2-5">Добавить эмодзи для валют</label></li>
+                </ul>
+                <div class="status-message"></div>
+            </section>
+
+            <section>
+                <h2>3. Котировки</h2>
+                <ul>
+                    <li><input type="checkbox" id="item3-1"> <label for="item3-1">Выставить все котировки (пошагово)</label></li>
+                    <li><input type="checkbox" id="item3-2"> <label for="item3-2">Проверить отображение таблицы котировок</label></li>
+                    <li><input type="checkbox" id="item3-3"> <label for="item3-3">Опробовать корректировку курса отдельной валюты</label></li>
+                </ul>
+                <div class="status-message"></div>
+            </section>
+
+            <section>
+                <h2>4. Заказы</h2>
+                <ul>
+                    <li><input type="checkbox" id="item4-1"> <label for="item4-1">Создать заказ на обмен за нац. валюту (USD → RUB)</label></li>
+                    <li><input type="checkbox" id="item4-2"> <label for="item4-2">Создать заказ на кросс-пару (EUR → USD)</label></li>
+                    <li><input type="checkbox" id="item4-3"> <label for="item4-3">Проверить варианты округления (доплата клиента/офиса)</label></li>
+                    <li><input type="checkbox" id="item4-4"> <label for="item4-4">Отредактировать заказ (изменить курс/сумму/клиента)</label></li>
+                    <li><input type="checkbox" id="item4-5"> <label for="item4-5">Изменить статус заказа</label></li>
+                </ul>
+                <div class="status-message"></div>
+            </section>
+
+            <section>
+                <h2>5. Канал для сотрудников</h2>
+                <ul>
+                    <li><input type="checkbox" id="item5-1"> <label for="item5-1">Создать закрытый канал Telegram</label></li>
+                    <li><input type="checkbox" id="item5-2"> <label for="item5-2">Привязать группу обсуждения</label></li>
+                    <li><input type="checkbox" id="item5-3"> <label for="item5-3">Получить chat_id канала (через @myidbot)</label></li>
+                    <li><input type="checkbox" id="item5-4"> <label for="item5-4">Подключить канал в боте (Настройки → Обменник → ID канала)</label></li>
+                    <li><input type="checkbox" id="item5-5"> <label for="item5-5">Назначить бота администратором канала</label></li>
+                    <li><input type="checkbox" id="item5-6"> <label for="item5-6">Проверить отправку заказа в канал</label></li>
+                </ul>
+                <div class="status-message"></div>
+            </section>
+
+            <section>
+                <h2>6. Пользователи и роли</h2>
+                <ul>
+                    <li><input type="checkbox" id="item6-1"> <label for="item6-1">Добавить сотрудника (по Telegram ID)</label></li>
+                    <li><input type="checkbox" id="item6-2"> <label for="item6-2">Назначить роль (Админ/Оператор/Пользователь)</label></li>
+                    <li><input type="checkbox" id="item6-3"> <label for="item6-3">Изменить права существующего пользователя</label></li>
+                </ul>
+                <div class="status-message"></div>
+            </section>
+
+            <section>
+                <h2>7. Отчетность</h2>
+                <ul>
+                    <li><input type="checkbox" id="item7-1"> <label for="item7-1">Выгрузить таблицу заказов (CSV или Excel)</label></li>
+                    <li><input type="checkbox" id="item7-2"> <label for="item7-2">Проверить структуру выгруженных данных</label></li>
+                </ul>
+                <div class="status-message"></div>
+            </section>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2026 Exchange Desk Bot Checklist</p>
+    </footer>
+
+    <script>
+        const sections = document.querySelectorAll('section');
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        const sendButton = document.createElement('button');
+        sendButton.textContent = 'Отправить чек-лист';
+        sendButton.disabled = true;
+        document.querySelector('.container').appendChild(sendButton);
+
+        function checkSectionCompleted(section) {
+            const sectionCheckboxes = section.querySelectorAll('input[type="checkbox"]');
+            const total = sectionCheckboxes.length;
+            const checkedCount = Array.from(sectionCheckboxes).filter(cb => cb.checked).length;
+            const half = Math.ceil(total / 2);
+            const message = section.querySelector('.status-message');
+            if (message) {
+                if (checkedCount === total) {
+                    message.textContent = 'Выполнено';
+                    message.style.color = 'var(--accent-green)';
+                    message.style.background = 'rgba(93, 253, 203, 0.2)'; // Легкий фон для подсветки
+                    message.style.display = 'block';
+                } else if (checkedCount >= half) {
+                    message.textContent = 'В процессе';
+                    message.style.color = 'var(--accent-orange)';
+                    message.style.background = 'rgba(255, 107, 53, 0.2)'; // Легкий фон для подсветки
+                    message.style.display = 'block';
+                } else {
+                    message.style.display = 'none';
+                }
+            }
+        }
+
+        function checkAllChecked() {
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            sendButton.disabled = !allChecked;
+        }
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', () => {
+                const section = cb.closest('section');
+                checkSectionCompleted(section);
+                checkAllChecked();
+            });
+        });
+
+        // Initial check for each section
+        sections.forEach(section => checkSectionCompleted(section));
+        checkAllChecked(); // Initial check for send button
+
+        sendButton.addEventListener('click', () => {
+            let summary = 'Завершенный чек-лист Exchange Desk Bot:\n\n';
+            document.querySelectorAll('section').forEach(section => {
+                summary += section.querySelector('h2').textContent + '\n';
+                section.querySelectorAll('li').forEach(li => {
+                    const label = li.querySelector('label').textContent;
+                    summary += '- ' + label + ' (выполнено)\n';
+                });
+                summary += '\n';
+            });
+
+            // Для "отправки" - вывод в консоль и оповещение
+            console.log(summary);
+            alert('Чек-лист завершен и "отправлен"! Подробности в консоли разработчика (F12).');
+            
+            // Опционально: копирование в буфер обмена, если поддерживается
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(summary).then(() => {
+                    alert('Чек-лист скопирован в буфер обмена!');
+                }).catch(err => {
+                    console.error('Ошибка копирования: ', err);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
