@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Интерактивный Опросник: 
-</title>
+    <title>Интерактивный Опросник: Чек-лист Exchange Desk Bot</title>
     <style>
         :root {
             /* Colors */
@@ -211,6 +210,19 @@
                 padding: 1rem; /* Уменьшаем отступы для компактности */
                 margin-bottom: 1rem;
             }
+            h1, h2 {
+                font-size: 1.2rem; /* Уменьшаем размер заголовков на мобильных */
+            }
+            label {
+                font-size: 0.9rem; /* Уменьшаем текст меток */
+            }
+            .status-message {
+                font-size: 1rem;
+            }
+            button {
+                width: 100%; /* Кнопка на всю ширину на мобильных */
+                padding: 15px;
+            }
         }
     </style>
 </head>
@@ -345,10 +357,19 @@
                 const section = cb.closest('section');
                 checkSectionCompleted(section);
                 checkAllChecked();
+                localStorage.setItem(cb.id, cb.checked);
             });
         });
 
-        // Initial check for each section
+        // Load checkbox states from localStorage
+        checkboxes.forEach(cb => {
+            const savedState = localStorage.getItem(cb.id);
+            if (savedState !== null) {
+                cb.checked = savedState === 'true';
+            }
+        });
+
+        // Initial check for each section after loading states
         sections.forEach(section => checkSectionCompleted(section));
         checkAllChecked(); // Initial check for send button
 
