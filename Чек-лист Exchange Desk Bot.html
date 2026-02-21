@@ -324,6 +324,21 @@
         sendButton.disabled = true;
         document.querySelector('.container').appendChild(sendButton);
 
+        // Function to check if localStorage is available
+        function isLocalStorageAvailable() {
+            try {
+                const testKey = '__storage_test__';
+                localStorage.setItem(testKey, testKey);
+                localStorage.removeItem(testKey);
+                return true;
+            } catch (e) {
+                console.warn('localStorage is not available:', e);
+                return false;
+            }
+        }
+
+        const storageAvailable = isLocalStorageAvailable();
+
         function checkSectionCompleted(section) {
             const sectionCheckboxes = section.querySelectorAll('input[type="checkbox"]');
             const total = sectionCheckboxes.length;
@@ -357,17 +372,21 @@
                 const section = cb.closest('section');
                 checkSectionCompleted(section);
                 checkAllChecked();
-                localStorage.setItem(cb.id, cb.checked);
+                if (storageAvailable) {
+                    localStorage.setItem(cb.id, cb.checked);
+                }
             });
         });
 
-        // Load checkbox states from localStorage
-        checkboxes.forEach(cb => {
-            const savedState = localStorage.getItem(cb.id);
-            if (savedState !== null) {
-                cb.checked = savedState === 'true';
-            }
-        });
+        // Load checkbox states from localStorage if available
+        if (storageAvailable) {
+            checkboxes.forEach(cb => {
+                const savedState = localStorage.getItem(cb.id);
+                if (savedState !== null) {
+                    cb.checked = savedState === 'true';
+                }
+            });
+        }
 
         // Initial check for each section after loading states
         sections.forEach(section => checkSectionCompleted(section));
